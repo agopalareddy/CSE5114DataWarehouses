@@ -8,7 +8,7 @@ class NaiveCSVWarehouse(DataWarehouse):
     def __init__(self, csv_file: str):
         """Initialize the CSV warehouse with a filename."""
         self.csv_file = csv_file
-    
+
     def add_data(self, data: Dict[str, Any]) -> None:
         """
         Add a row of data to the CSV file.
@@ -17,7 +17,7 @@ class NaiveCSVWarehouse(DataWarehouse):
             data (Dict[str, Any]): A dictionary representing a row of data.
         """
         file_exists = os.path.exists(self.csv_file)
-        
+
         # If file doesn't exist, create it with headers
         if not file_exists:
             with open(self.csv_file, 'w', newline='', encoding='utf-8') as file:
@@ -44,7 +44,7 @@ class NaiveCSVWarehouse(DataWarehouse):
         """Get the headers from the CSV file."""
         if not os.path.exists(self.csv_file):
             return []
-        
+
         try:
             with open(self.csv_file, 'r', newline='', encoding='utf-8') as file:
                 reader = csv.reader(file)
@@ -57,7 +57,7 @@ class NaiveCSVWarehouse(DataWarehouse):
         """Read all data from the CSV file."""
         if not os.path.exists(self.csv_file):
             return []
-        
+
         try:
             with open(self.csv_file, 'r', newline='', encoding='utf-8') as file:
                 reader = csv.DictReader(file)
@@ -72,7 +72,7 @@ class NaiveCSVWarehouse(DataWarehouse):
             with open(self.csv_file, 'w', newline='', encoding='utf-8') as file:
                 pass
             return
-        
+
         headers = list(data[0].keys()) if data else []
         with open(self.csv_file, 'w', newline='', encoding='utf-8') as file:
             writer = csv.DictWriter(file, fieldnames=headers)
@@ -90,13 +90,13 @@ class NaiveCSVWarehouse(DataWarehouse):
         """
         all_data = self._read_all_data()
         updated = False
-        
+
         for row in all_data:
             if row.get(key_column) == str(key_value):
                 row.update(updated_data)
                 updated = True
                 break  # Update only the first matching row
-        
+
         if updated:
             self._write_all_data(all_data)
 
@@ -110,7 +110,7 @@ class NaiveCSVWarehouse(DataWarehouse):
         """
         all_data = self._read_all_data()
         filtered_data = [row for row in all_data if row.get(key_column) != str(key_value)]
-        
+
         # Only rewrite if data was actually deleted
         if len(filtered_data) != len(all_data):
             self._write_all_data(filtered_data)
@@ -128,13 +128,13 @@ class NaiveCSVWarehouse(DataWarehouse):
         """
         if not keys:
             return []
-        
+
         all_data = self._read_all_data()
         str_keys = [str(key) for key in keys]
-        
+
         results = []
         for row in all_data:
             if row.get(key_column) in str_keys:
                 results.append(row)
-        
+
         return results
